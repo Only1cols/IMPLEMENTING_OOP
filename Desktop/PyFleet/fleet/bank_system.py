@@ -5,6 +5,14 @@ class Account(ABC):
     def __init__(self, owner, balance):
         self.owner = owner
         self._balance = balance
+        self.transactions = []  # track every transactions
+
+    def __len__(self):
+        return len(self.transactions)  # no of transactions
+
+    def transaction_history(self):
+        for transaction in self.transactions:
+            print(transaction)
 
     @property  # getter
     def balance(self):
@@ -29,10 +37,12 @@ class SavingsAccount(Account):
 
     def deposit(self, amount):
         self._balance += amount
+        self.transactions.append(f"Deposited {amount}")
         return f"Hi {self.owner} your savings account has been deposited with {amount}, your balance is {self._balance}"
 
     def withdraw(self, amount):
         self._balance -= amount
+        self.transactions.append(f"withdrawn {amount}")  # record it
         return f"Hi {self.owner},{amount} has been deducted from your savings account, your account balance is {self._balance}"
 
     def apply_interest(self):
@@ -49,9 +59,12 @@ class CurrentAccount(Account):
 
     def deposit(self, amount):
         self._balance += amount
+        self.transactions.append(f"deposited {amount}")  # record it
         return f"Hi {self.owner}, your curent account has been credited with {amount}, your balance is {self._balance}"
 
     def withdraw(self, amount):
+
+        self.transactions.append(f"withdrawn {amount}")  # record it
         if self._balance - amount >= -self._overdraft_limit:
             self._balance -= amount
             return f"Hi {self.owner}, {amount} debited successfully, your balance is {self._balance}"
@@ -81,9 +94,12 @@ print(savings2.withdraw(500))
 print(savings2.deposit(500))
 print(savings2.apply_interest())
 
+
 print("-----Testing current account------")
 
 print(current.deposit(1000))
 print(current.withdraw(9000))  # exceeds overdraft
 print(current.check_overdraft())
 print(current.get_balance())
+
+print(len(current))
